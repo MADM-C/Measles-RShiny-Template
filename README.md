@@ -1,27 +1,27 @@
 # Midwest EpiView: Measles
 
+## Table of Contents
+
+- [Project Description](#project-description)
+- [Intended Use Cases and Limitations](#intended-use-cases-and-limitations)
+- [Repository Structure](#repository-structure)
+- [Expected Input Data Structure](#expected-input-data-structure)
+- [Running the Dashboard Locally](#running-the-dashboard-locally)
+- [Adapting the Dashboard for Another State](#adapting-the-dashboard-for-another-state)
+- [Deployment](#deployment)
+- [Organization & Funding](#organization--funding)
+- [Contact](#contact)
+- [License](#license)
+
+## Project Description
+
 An interactive dashboard for visualizing measles vaccination coverage and historical measles case data across Minnesota.
 
 Midwest EpiView: Measles was developed by the [Midwest Analytics and Disease Modeling Center (MADMC)](https://www.sph.umn.edu/research/centers/midwest-analytics-and-disease-modeling/) at the University of Minnesota School of Public Health. It is built in **R** using the **Shiny** framework and integrates vaccination, geographic, and historical case data into a set of interactive maps and tables to support exploratory public health analysis and outreach.
 
 Although the dashboard was originally built with Minnesota-specific datasets, the framework can be adapted by other states or jurisdictions using equivalent local data sources.
 
-## Table of Contents
-
-- [Features](#features)
-- [Repository Structure](#repository-structure)
-- [Expected Input Data Structure](#expected-input-data-structure)
-- [Running the Dashboard Locally](#running-the-dashboard-locally)
-- [Adapting the Dashboard for Another State](#adapting-the-dashboard-for-another-state)
-- [Deployment](#deployment)
-- [Intended Use and Limitations](#intended-use-and-limitations)
-- [Organization & Funding](#organization--funding)
-- [Contact](#contact)
-- [License](#license)
-
-
-## Features
-
+Key features include:
 - County-level MMR vaccination coverage maps
 - School-level vaccination coverage visualization
 - Child care vaccination coverage visualization
@@ -30,6 +30,27 @@ Although the dashboard was originally built with Minnesota-specific datasets, th
 - Proximity search tool for identifying nearby facilities below selected vaccination thresholds
 - Interactive tables and filtering tools
 
+## Intended Use Cases and Limitations
+This dashboard is intended as a data exploration and visualization tool for understanding patterns in measles vaccination coverage and historical measles case counts across Minnesota.
+
+Possible use cases include:
+• Public health planning and outreach
+
+• Identifying geographic areas with lower vaccination coverage
+
+• Exploring historical measles trends
+
+• Demonstrating the importance of herd immunity thresholds
+
+Limitations include:
+• Vaccination data are based on annual immunization reports submitted by schools and child care facilities and may be incomplete for some locations.
+
+• Grade-level vaccination coverage may be redacted when enrollment is below privacy thresholds.
+
+• Case counts represent reported measles cases by county and year and should not be interpreted as real-time surveillance data.
+
+This tool is intended for exploratory and educational use, not clinical or operational decision-making.
+Installation and Run Guide
 ## Repository Structure
 
 ### App Core
@@ -120,23 +141,6 @@ Most jurisdiction-specific customization occurs in:
 ## Deployment
 
 The original dashboard was deployed using [ShinyApps.io](https://www.shinyapps.io/).
-
-## Intended Use and Limitations
-
-This dashboard is intended for exploratory public health analysis, outreach, planning, and educational use.
-
-**Potential use cases:**
-
-- Identifying areas with lower vaccination coverage
-- Exploring geographic variation in MMR coverage
-- Reviewing historical measles trends
-- Supporting outbreak preparedness discussions
-
-**The dashboard is _not_ intended to replace:**
-
-- Official surveillance systems
-- Clinical decision-making tools
-- Real-time outbreak investigation systems
 
 ## Organization & Funding
 
