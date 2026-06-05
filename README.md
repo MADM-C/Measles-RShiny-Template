@@ -1,26 +1,27 @@
 # Midwest EpiView: Measles
 
+## Table of Contents
+
+- [Project Description](#project-description)
+- [Intended Use Cases and Limitations](#intended-use-cases-and-limitations)
+- [Repository Structure](#repository-structure)
+- [Expected Input Data Structure](#expected-input-data-structure)
+- [Running the Dashboard Locally](#running-the-dashboard-locally)
+- [Adapting the Dashboard for Another State](#adapting-the-dashboard-for-another-state)
+- [Deployment](#deployment)
+- [Organization & Funding](#organization--funding)
+- [Contact](#contact)
+- [License](#license)
+
+## Project Description
+
 An interactive dashboard for visualizing measles vaccination coverage and historical measles case data across Minnesota.
 
 Midwest EpiView: Measles was developed by the [Midwest Analytics and Disease Modeling Center (MADMC)](https://www.sph.umn.edu/research/centers/midwest-analytics-and-disease-modeling/) at the University of Minnesota School of Public Health. It is built in **R** using the **Shiny** framework and integrates vaccination, geographic, and historical case data into a set of interactive maps and tables to support exploratory public health analysis and outreach.
 
 Although the dashboard was originally built with Minnesota-specific datasets, the framework can be adapted by other states or jurisdictions using equivalent local data sources.
 
-## Table of Contents
-
-- [Features](#features)
-- [Repository Structure](#repository-structure)
-- [Expected Input Data Structure](#expected-input-data-structure)
-- [Running the Dashboard Locally](#running-the-dashboard-locally)
-- [Adapting the Dashboard for Another State](#adapting-the-dashboard-for-another-state)
-- [Deployment](#deployment)
-- [Intended Use and Limitations](#intended-use-and-limitations)
-- [Organization & Funding](#organization--funding)
-- [Contact](#contact)
-- [License](#license)
-
-## Features
-
+Key features include:
 - County-level MMR vaccination coverage maps
 - School-level vaccination coverage visualization
 - Child care vaccination coverage visualization
@@ -29,6 +30,27 @@ Although the dashboard was originally built with Minnesota-specific datasets, th
 - Proximity search tool for identifying nearby facilities below selected vaccination thresholds
 - Interactive tables and filtering tools
 
+## Intended Use Cases and Limitations
+This dashboard is intended as a data exploration and visualization tool for understanding patterns in measles vaccination coverage and historical measles case counts across Minnesota.
+
+Possible use cases include:
+• Public health planning and outreach
+
+• Identifying geographic areas with lower vaccination coverage
+
+• Exploring historical measles trends
+
+• Demonstrating the importance of herd immunity thresholds
+
+Limitations include:
+• Vaccination data are based on annual immunization reports submitted by schools and child care facilities and may be incomplete for some locations.
+
+• Grade-level vaccination coverage may be redacted when enrollment is below privacy thresholds.
+
+• Case counts represent reported measles cases by county and year and should not be interpreted as real-time surveillance data.
+
+This tool is intended for exploratory and educational use, not clinical or operational decision-making.
+Installation and Run Guide
 ## Repository Structure
 
 ### App Core
@@ -120,23 +142,6 @@ Most jurisdiction-specific customization occurs in:
 
 The original dashboard was deployed using [ShinyApps.io](https://www.shinyapps.io/).
 
-## Intended Use and Limitations
-
-This dashboard is intended for exploratory public health analysis, outreach, planning, and educational use.
-
-**Potential use cases:**
-
-- Identifying areas with lower vaccination coverage
-- Exploring geographic variation in MMR coverage
-- Reviewing historical measles trends
-- Supporting outbreak preparedness discussions
-
-**The dashboard is _not_ intended to replace:**
-
-- Official surveillance systems
-- Clinical decision-making tools
-- Real-time outbreak investigation systems
-
 ## Organization & Funding
 
 **Organization**
@@ -163,11 +168,24 @@ Its contents are solely the responsibility of the authors and do not necessarily
 For questions, contact [madmc@umn.edu](mailto:madmc@umn.edu).
 
 ## License
-
 MIT License
 
 Copyright (c) 2022 Consortium of Infectious Disease Modeling Hubs
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
