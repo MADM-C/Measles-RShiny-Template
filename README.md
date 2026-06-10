@@ -34,6 +34,7 @@ Key features include:
 This dashboard is intended as a data exploration and visualization tool for understanding patterns in measles vaccination coverage and historical measles case counts across Minnesota.
 
 Possible use cases include:
+
 • Public health planning and outreach
 
 • Identifying geographic areas with lower vaccination coverage
@@ -41,6 +42,7 @@ Possible use cases include:
 • Exploring historical measles trends
 
 Limitations include:
+
 • Vaccination data are based on annual immunization reports submitted by schools and child care facilities and may be incomplete for some locations.
 
 • Grade-level vaccination coverage may be redacted when enrollment is below privacy thresholds.
