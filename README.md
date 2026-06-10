@@ -15,7 +15,7 @@
 
 ## Project Description
 
-An interactive dashboard for visualizing measles vaccination coverage and historical measles case data across Minnesota.
+The original Midwest EpiView: Measles project is an interactive dashboard for visualizing measles vaccination coverage and historical measles case data across Minnesota. This repository contains the necessary code for adapting this dashboard to different states and different vaccine coverage. 
 
 Midwest EpiView: Measles was developed by the [Midwest Analytics and Disease Modeling Center (MADMC)](https://www.sph.umn.edu/research/centers/midwest-analytics-and-disease-modeling/) at the University of Minnesota School of Public Health. It is built in **R** using the **Shiny** framework and integrates vaccination, geographic, and historical case data into a set of interactive maps and tables to support exploratory public health analysis and outreach.
 
@@ -40,8 +40,6 @@ Possible use cases include:
 
 • Exploring historical measles trends
 
-• Demonstrating the importance of herd immunity thresholds
-
 Limitations include:
 • Vaccination data are based on annual immunization reports submitted by schools and child care facilities and may be incomplete for some locations.
 
@@ -49,8 +47,7 @@ Limitations include:
 
 • Case counts represent reported measles cases by county and year and should not be interpreted as real-time surveillance data.
 
-This tool is intended for exploratory and educational use, not clinical or operational decision-making.
-Installation and Run Guide
+
 ## Repository Structure
 
 ### App Core
@@ -147,11 +144,10 @@ The original dashboard was deployed using [ShinyApps.io](https://www.shinyapps.i
 **Organization**
 
 Midwest Analytics and Disease Modeling Center (MADMC)
-University of Minnesota School of Public Health
 
 **Contributing Authors**
 
-Midwest Analytics and Disease Modeling Center research team
+Team members at the University of Minnesota School of Public Health and Minnesota Department of Health
 
 **More information**
 
