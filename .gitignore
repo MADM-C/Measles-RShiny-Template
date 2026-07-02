@@ -1,3 +1,7 @@
+# MN specific file and locally generated files
+MNdata_wrangling_for_app.R
+App Data/
+
 # History files
 .Rhistory
 .Rapp.history

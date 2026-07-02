@@ -52,7 +52,7 @@
 #   Dataset containing historical measles cases by county, year,
 #   and age group.
 #
-# mn_counties
+# counties
 #   Used to generate the list of counties for the table dropdown.
 #
 # Reactive Inputs Used
@@ -152,7 +152,7 @@ case_table <- measles_cases %>%
 # ---------- Keep the county dropdown in sync with selected table ----------
 observeEvent(input$table_type, {
   
-  all_counties <- sort(unique(stringr::str_to_title(mn_counties$county_name)))
+  all_counties <- sort(unique(stringr::str_to_title(counties$county_name)))
   
   current_selection <- input$gt_selected_county
   

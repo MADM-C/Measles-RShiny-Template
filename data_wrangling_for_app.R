@@ -61,6 +61,7 @@ COUNTY_YEAR <- 2022   # Census TIGER/Line vintage for county shapes
 # ---- Input file paths ----
 # All inputs live under data/. Replace with your state's files. 
 # See README for the required format of each file.
+
 PATH_COUNTY_MMR    <- "data/mmr_county2526.csv"
 PATH_DEMOGRAPHICS  <- "data/demographics_school_2026.csv"
 PATH_MEASLES_CASES <- "data/measles_cleaned_2025.xlsx"
@@ -105,14 +106,14 @@ CLASS_EXCLUDE <- c(60, 82, 83, 84, 85, 90)   # MN class codes to drop, if a CLAS
 #                       full_vax_pct, total_enrollment,
 #                       students_of_color, frl_eligible, geometry
 #   measles_cases     : county, year, n_cases, age_group
-#   mn_counties       : county_lower, county_name, fips, geometry
+#   counties          : county_lower, county_name, fips, geometry
 #   daycare_joined    : daycare_name, idsch, COUNTYNAME,
 #                       full_vax, full_vax_pct, enroll_mmreligible,
 #                       geometry
-#   school_demo_joined: school_name, mde_school_id, COUNTYNAME,
+#   school_demo_joined: school_name, school_id, COUNTYNAME,
 #                       GRADERANGE, full_vax, full_vax_pct,
 #                       total_enrollment, geometry
-#   mmr_grade         : mde_school_id, grade, full_vax_pct
+#   mmr_grade         : school_id, grade, full_vax_pct
 #
 # Coverage values may be numeric or "blurred" strings (e.g. ">95");
 # the app handles both. Small-cell suppression / blurring should be
@@ -142,22 +143,22 @@ county_mmr <- read_csv(PATH_COUNTY_MMR) %>%
   mutate(county = tolower(county), fips = as.character(fips))
 
 # County boundaries (downloads from Census at runtime; needs internet)
-mn_counties <- counties(state = STATE, cb = TRUE, year = COUNTY_YEAR) %>%
+counties <- counties(state = STATE, cb = TRUE, year = COUNTY_YEAR) %>%
   st_transform(4326) %>%
   mutate(county_lower = tolower(NAME), county_name = NAME, fips = GEOID)
 
-county_map_data_pre <- mn_counties %>%
+county_map_data_pre <- counties %>%
   left_join(county_mmr, by = c("county_lower" = "county", "fips" = "fips"))
 
 # ==== County-Level Demographics ====
 demographics_school <- read_csv(PATH_DEMOGRAPHICS) %>%
-  mutate(mde_school_id = as.character(mde_school_id))
+  mutate(school_id = as.character(school_id))
 
 # Keep only the total-school row per facility. ASSUMPTION: the row
 # with the largest enrollment is the school total (vs. a grade or
 # program sub-row). Verify this holds for your source format.
 demographics_school_collapsed <- demographics_school %>%
-  group_by(mde_school_id) %>%
+  group_by(school_id) %>%
   slice_max(total_enrollment, n = 1, with_ties = FALSE) %>%
   ungroup()
 
@@ -191,7 +192,7 @@ measles_cases <- read_excel(PATH_MEASLES_CASES) %>%
   )
 
 dir.create(OUT_DIR, showWarnings = FALSE)
-save(county_map_data, measles_cases, mn_counties,
+save(county_map_data, measles_cases, counties,
      file = file.path(OUT_DIR, "county_vaccine_data.RData"))
 
 
@@ -214,7 +215,7 @@ daycare_joined <- daycarecsv %>%
   report_join("idsch", "daycare + locations") %>%
   st_as_sf(sf_column_name = "geometry", crs = st_crs(childcare_sf)) %>%
   st_join(
-    mn_counties %>% select(county_lower, COUNTYNAME = county_name),
+    counties %>% select(county_lower, COUNTYNAME = county_name),
     join = st_within, left = TRUE
   ) %>%
   mutate(
@@ -236,16 +237,16 @@ save(daycare_joined, file = file.path(OUT_DIR, "daycare_vaccine_data.RData"))
 # ==== School Vaccine / Enrollment + shapefile ====
 schoolcsv <- read_csv(PATH_SCHOOL_MMR) %>%
   mutate(
-    mde_school_id_raw = as.character(mde_school_id),
-    mde_school_id     = normalize_id(mde_school_id_raw)
+    school_id_raw = as.character(school_id),
+    school_id     = normalize_id(school_id_raw)
   )
 
 # Optional old -> new ID crosswalk. Set PATH_ID_CROSSWALK <- NA to skip.
 if (!is.na(PATH_ID_CROSSWALK)) {
   id_map <- read_excel(PATH_ID_CROSSWALK) %>%
     transmute(
-      old_id = normalize_id(mde_school_id),
-      new_id = normalize_id(new_mde_school_id)
+      old_id = normalize_id(school_id),
+      new_id = normalize_id(new_school_id)
     ) %>%
     filter(!is.na(old_id), old_id != "", !is.na(new_id), new_id != "")
 } else {
@@ -254,8 +255,8 @@ if (!is.na(PATH_ID_CROSSWALK)) {
 
 remap_ids <- function(df) {
   df %>%
-    left_join(id_map, by = c("mde_school_id" = "old_id")) %>%
-    mutate(mde_school_id = coalesce(new_id, mde_school_id)) %>%
+    left_join(id_map, by = c("school_id" = "old_id")) %>%
+    mutate(school_id = coalesce(new_id, school_id)) %>%
     select(-new_id)
 }
 
@@ -271,7 +272,7 @@ school_sf <- st_read(PATH_SCHOOL_SHP) %>%
     ORGTYPE   = str_pad(ORGTYPE,   2, pad = "0"),
     ORGNUMBER = str_pad(ORGNUMBER, 4, pad = "0"),
     SCHNUMBER = str_pad(SCHNUMBER, 3, pad = "0"),
-    mde_school_id = paste0(ORGTYPE, ORGNUMBER, SCHNUMBER, "000")
+    school_id = paste0(ORGTYPE, ORGNUMBER, SCHNUMBER, "000")
   ) %>%
   remap_ids() %>%
   # In-scope filter (STATE-SPECIFIC codes — see CONFIG)
@@ -279,7 +280,7 @@ school_sf <- st_read(PATH_SCHOOL_SHP) %>%
     ORGTYPE %in% ORGTYPE_KEEP,
     SCHNUMBER != "000",
     is.na(GRADERANGE) | toupper(GRADERANGE) != "EC-PK",
-    !str_detect(tolower(MDENAME), "district|library")
+    !str_detect(tolower(NAME), "district|library")
   ) %>%
   {
     if ("CLASS" %in% names(.)) {
@@ -291,7 +292,7 @@ school_sf <- st_read(PATH_SCHOOL_SHP) %>%
 # NOTE: inner_join silently drops schools missing from either side. If
 # your IDs don't reconcile cleanly, expect facilities to disappear here;
 # the count below makes that visible.
-school_joined <- inner_join(school_sf, schoolcsv, by = "mde_school_id")
+school_joined <- inner_join(school_sf, schoolcsv, by = "school_id")
 message(sprintf("[join] school MMR + locations: %d schools matched", nrow(school_joined)))
 
 school_joined <- school_joined %>%
@@ -302,18 +303,18 @@ school_demo_joined <- school_joined %>%
   mutate(
     school_name = str_to_title(
       ifelse(
-        duplicated(MDENAME) | duplicated(MDENAME, fromLast = TRUE),
-        paste(MDENAME, MDEADDR, sep = " - "),
-        MDENAME
+        duplicated(NAME) | duplicated(NAME, fromLast = TRUE),
+        paste(NAME, ADDR, sep = " - "),
+        NAME
       )
     )
   ) %>%
   select(
-    school_name, PUBPRIV, GRADERANGE, COUNTYNAME, mde_school_id,
+    school_name, PUBPRIV, GRADERANGE, COUNTYNAME, school_id,
     enroll, full_vax, partial_vax, nonmedical, medical, full_vax_pct,
-    nonmedical_pct, medical_pct, mde_school_id_raw, full_vax_pct_num,
+    nonmedical_pct, medical_pct, school_id_raw, full_vax_pct_num,
     total_enrollment = enroll,   # app reads total_enrollment
-    geometry, MDEADDR
+    geometry, ADDR
   )
 
 save(school_demo_joined, file = file.path(OUT_DIR, "school_vaccine_data.RData"))
@@ -323,8 +324,8 @@ save(school_demo_joined, file = file.path(OUT_DIR, "school_vaccine_data.RData"))
 mmr_grade <- read_csv(PATH_GRADE_MMR) %>%
   filter(vacctype == "MMR") %>%
   mutate(
-    mde_school_id_raw = as.character(mde_school_id),
-    mde_school_id     = normalize_id(mde_school_id_raw)
+    school_id_raw = as.character(school_id),
+    school_id     = normalize_id(school_id_raw)
   ) %>%
   remap_ids()
 

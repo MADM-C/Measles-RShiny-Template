@@ -31,7 +31,7 @@
 #   County-level measles case dataset containing counts by year and
 #   age group used for secondary map switch.
 #
-# mn_counties
+# counties
 #   Base county shapefile used for spatial joins and lookup of county
 #   names when map polygons are clicked.
 #
@@ -74,7 +74,7 @@
 # ============================================================
 
 
-countyMapServer <- function(input, output, session, county_map_data, measles_cases, mn_counties, pal_county) {
+countyMapServer <- function(input, output, session, county_map_data, measles_cases, counties, pal_county) {
   
   # === County-level Leaflet Map ===
   output$county_map <- renderLeaflet({
@@ -135,7 +135,7 @@ countyMapServer <- function(input, output, session, county_map_data, measles_cas
         ) %>%
         group_by(county) %>%
         summarise(n_cases = sum(n_cases, na.rm = TRUE), .groups = "drop") %>%
-        left_join(mn_counties, by = c("county" = "county_lower")) %>%
+        left_join(counties, by = c("county" = "county_lower")) %>%
         mutate(centroid = st_centroid(geometry)) %>%
         st_as_sf() %>%
         st_set_geometry("centroid")
@@ -187,7 +187,7 @@ countyMapServer <- function(input, output, session, county_map_data, measles_cas
   # === Click county polygon to update county dropdown ===
   observeEvent(input$county_map_shape_click, {
     clicked <- input$county_map_shape_click$id
-    match <- mn_counties %>% filter(county_lower == clicked) %>% pull(county_name)
+    match <- counties %>% filter(county_lower == clicked) %>% pull(county_name)
     if (length(match) == 1) {
       updateSelectInput(session, "selected_county", selected = match)
     }

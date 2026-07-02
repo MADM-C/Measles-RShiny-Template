@@ -102,19 +102,19 @@ gradeDetailsServer <- function(input, output, session,
   # === Table of Grade-Level MMR for Selected School ==== 
   output$grade_table <- renderTable({
     
-    school_id <- selected_school_id()
+    school_id_choice <- selected_school_id()
     
-    if (is.null(school_id) && !is.null(input$selected_location)) {
-      school_id <- school_demo_joined %>%
+    if (is.null(school_id_choice) && !is.null(input$selected_location)) {
+      school_id_choice <- school_demo_joined %>%
         filter(school_name == input$selected_location) %>%
-        pull(mde_school_id) %>%
+        pull(school_id) %>%
         .[1]
     }
     
-    req(school_id)
+    req(school_id_choice)
     
     mmr_grade %>%
-      filter(mde_school_id == school_id) %>%
+      filter(school_id == school_id_choice) %>%
       select(grade, full_vax_pct) %>%
       mutate(
         grade = ifelse(grade == 0, "K", as.character(grade)),
@@ -137,19 +137,19 @@ gradeDetailsServer <- function(input, output, session,
   # === Grade-Level Bar Chart (NA-safe) ===
   output$grade_plot <- renderPlot({
     
-    school_id <- selected_school_id()
+    school_id_choice <- selected_school_id()
     
-    if (is.null(school_id) && !is.null(input$selected_location)) {
-      school_id <- school_demo_joined %>%
+    if (is.null(school_id_choice) && !is.null(input$selected_location)) {
+      school_id_choice <- school_demo_joined %>%
         filter(school_name == input$selected_location) %>%
-        pull(mde_school_id) %>%
+        pull(school_id) %>%
         .[1]
     }
     
-    req(school_id)
+    req(school_id_choice)
     
     data <- mmr_grade %>%
-      filter(mde_school_id == school_id) %>%
+      filter(school_id == school_id_choice) %>%
       mutate(
         grade = ifelse(grade == 0, "K", as.character(grade)),
         grade = factor(grade, levels = c(as.character(12:1), "K")),
@@ -210,34 +210,34 @@ gradeDetailsServer <- function(input, output, session,
   # === UI: Display Grade Table and Demographics Together ===
   output$grade_output <- renderUI({
     
-    school_id <- selected_school_id()
+    school_id_choice <- selected_school_id()
     
-    if (is.null(school_id) && !is.null(input$selected_location)) {
-      school_id <- school_demo_joined %>%
+    if (is.null(school_id_choice) && !is.null(input$selected_location)) {
+      school_id_choice <- school_demo_joined %>%
         filter(school_name == input$selected_location) %>%
-        pull(mde_school_id) %>%
+        pull(school_id) %>%
         .[1]
     }
     
-    req(school_id)
+    req(school_id_choice)
     
     total_enrollment <- school_demo_joined %>%
-      filter(mde_school_id == school_id) %>%
+      filter(school_id == school_id_choice) %>%
       summarise(total = sum(total_enrollment, na.rm = TRUE), .groups = "drop") %>%
       pull(total)
     
-    is_school <- school_id %in% school_demo_joined$mde_school_id
+    is_school <- school_id_choice %in% school_demo_joined$school_id
     
     
     if (is_school) {
       
       overall_cov <- school_demo_joined %>%
-        filter(mde_school_id == school_id) %>%
+        filter(school_id == school_id_choice) %>%
         pull(full_vax_pct) %>%
         .[1]
       
       grade_rows <- mmr_grade %>%
-        filter(mde_school_id == school_id)
+        filter(school_id == school_id_choice)
       
       all_grades_redacted <-
         nrow(grade_rows) > 0 &&
