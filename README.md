@@ -34,20 +34,14 @@ Key features include:
 This dashboard is intended as a data exploration and visualization tool for understanding patterns in measles vaccination coverage and historical measles case counts across Minnesota.
 
 Possible use cases include:
-
-• Public health planning and outreach
-
-• Identifying geographic areas with lower vaccination coverage
-
-• Exploring historical measles trends
+- Public health planning and outreach
+- Identifying geographic areas with lower vaccination coverage
+- Exploring historical measles trends
 
 Limitations include:
-
-• Vaccination data are based on annual immunization reports submitted by schools and child care facilities and may be incomplete for some locations.
-
-• Grade-level vaccination coverage may be redacted when enrollment is below privacy thresholds.
-
-• Case counts represent reported measles cases by county and year and should not be interpreted as real-time surveillance data.
+- Vaccination data are based on annual immunization reports submitted by schools and child care facilities and may be incomplete for some locations.
+- Grade-level vaccination coverage may be redacted when enrollment is below privacy thresholds.
+- Case counts represent reported measles cases by county and year and should not be interpreted as real-time surveillance data.
 
 
 ## Repository Structure
@@ -90,16 +84,24 @@ The dashboard expects the following input datasets and fields. When adapting the
 
 | Input Dataset | Important Fields Expected | Used For |
 |---------------|---------------------------|----------|
-| County vaccination data | `county`, `fips`, `full_vax`, `full_vax_pct` | County-level vaccination coverage maps and summary statistics |
+| County vaccination data | `county`, `fips`<sup>a</sup>, `full_vax`, `full_vax_pct` | County-level vaccination coverage maps and summary statistics |
 | County boundary shapefile | `NAME`, `GEOID`, `geometry` | County map polygons and geographic joins |
-| School demographic data *(optional contextual dataset)* | `mde_school_id`, `county_name`, `total_enrollment`, `total_students_of_color_or_american_indian_count`, `total_students_eligible_for_free_or_reduced_priced_meals_count` | County-level demographic aggregation and contextual summaries |
+| School demographic data *(optional contextual dataset)* | `school_id`, `county_name`, `total_enrollment`, `total_students_of_color_or_american_indian_count`, `total_students_eligible_for_free_or_reduced_priced_meals_count` | County-level demographic aggregation and contextual summaries |
 | Historical measles case data | `county`, `year`, `n_cases`, `age_group` | Historical measles case overlays, filtering, and summary tables |
-| Child care vaccination data | `idsch`, `schname`, `full_vax`, `full_vax_pct`, `total_enroll`, `medical`, `nonmedical` | Child care vaccination maps, tables, and filtering |
+| Child care vaccination data | `idsch`, `schname`, `full_vax`, `full_vax_pct`, `total_enroll`, `medical`<sup>b</sup>, `nonmedical`<sup>c</sup> | Child care vaccination maps, tables, and filtering |
 | Child care location shapefile | `license_nu`, `name_of_pr`, `addresslin`, `geometry` | Joining child care vaccination records to mapped facility locations |
-| School vaccination data | `mde_school_id`, `schname`, `enroll`, `full_vax`, `partial_vax`, `medical`, `nonmedical`, `full_vax_pct`, `medical_pct`, `nonmedical_pct` | School-level vaccination maps, summaries, and popup displays |
-| School ID crosswalk *(optional but recommended)* | `mde_school_id`, `new_mde_school_id` | Reconciling outdated or changed school identifiers across datasets |
-| School location shapefile | `ORGTYPE`, `ORGNUMBER`, `SCHNUMBER`, `MDENAME`, `MDEADDR`, `COUNTYNAME`, `PUBPRIV`, `GRADERANGE`, `geometry` | Constructing school identifiers and mapping school locations |
-| Grade-level vaccination data | `mde_school_id`, `schname`, `disname`, `grade`, `vacctype`, `full_vax`, `full_vax_pct` | Grade-level school vaccination charts and drilldown tables |
+| School vaccination data | `school_id`, `schname`, `enroll`, `full_vax`, `partial_vax`, `medical`<sup>b</sup>, `nonmedical`<sup>c</sup>, `full_vax_pct`, `medical_pct`, `nonmedical_pct` | School-level vaccination maps, summaries, and popup displays |
+| School ID crosswalk *(optional but recommended)* | `school_id`, `new_school_id` | Reconciling outdated or changed school identifiers across datasets |
+| School location shapefile | `ORGTYPE`, `ORGNUMBER`, `SCHNUMBER`, `NAME`, `ADDR`, `COUNTYNAME`, `PUBPRIV`, `GRADERANGE`, `geometry` | Constructing school identifiers and mapping school locations |
+| Grade-level vaccination data | `school_id`, `schname`, `disname`<sup>d</sup>, `grade`, `vacctype`, `full_vax`, `full_vax_pct` | Grade-level school vaccination charts and drilldown tables |
+
+<sup>a</sup> FIPS = 2-digit identifier for US states
+
+<sup>b</sup> Medical = Medical exemption from vaccination
+
+<sup>c</sup> Nonmedical = Non medical exemption from vaccination
+
+<sup>d</sup> Disname = School district name
 
 ## Running the Dashboard Locally
 
@@ -117,19 +119,16 @@ The dashboard expects the following input datasets and fields. When adapting the
 The framework can be adapted to another jurisdiction by following this general workflow:
 
 1. **Obtain required datasets** to add to the app data.
-2. **Run the data wrangling module** to clean the data into app-ready data consumed by the app.
-3. **Run the dashboard locally** for validation.
-4. **Deploy** the application.
-
-Specific adaptation steps:
-
-1. Replace Minnesota shapefiles with local geographic boundary files.
-2. Replace Minnesota vaccination datasets with local vaccination data.
-3. Replace Minnesota measles case data with local historical case data.
-4. Update labels, titles, and descriptive text throughout the dashboard.
-5. Standardize incoming datasets to the structure expected by the application (see [Expected Input Data Structure](#expected-input-data-structure)).
-6. Validate joins between vaccination records and geographic datasets.
-7. Rebuild app-ready `.RData` files using the preprocessing scripts.
+2. **Standardize incoming datasets** to the structure expected by the application (see [Expected Input Data Structure](#expected-input-data-structure)).
+3. **Replace input file paths** in the data wrangling module with jurisdiction-specific files.
+     - Replace Minnesota shapefiles with local geographic boundary files.
+     - Replace Minnesota vaccination datasets with local vaccination data.
+     - Replace Minnesota measles case data with local historical case data.
+4. **Run the data wrangling module** to clean the data and populate app-ready `.RData` into an App Data folder.
+5. **Update labels, titles, and descriptive text** throughout the dashboard.
+6. **Validate joins** between vaccination records and geographic datasets.
+7. **Run the dashboard locally** for validation.
+8. **Deploy** the application.
 
 Most jurisdiction-specific customization occurs in:
 

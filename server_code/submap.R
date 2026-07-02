@@ -90,18 +90,18 @@ subMapServer <- function(input, output, session,
     clicked_id <- as.character(clicked_raw)[1]
     
     daycare_joined$idsch        <- as.character(daycare_joined$idsch)
-    school_demo_joined$mde_school_id <- as.character(school_demo_joined$mde_school_id)
+    school_demo_joined$school_id <- as.character(school_demo_joined$school_id)
     
     school_df  <- sf::st_drop_geometry(school_demo_joined)
     daycare_df <- sf::st_drop_geometry(daycare_joined)
     
-    school_match  <- dplyr::filter(school_df,  mde_school_id == clicked_id)
+    school_match  <- dplyr::filter(school_df,  school_id == clicked_id)
     daycare_match <- dplyr::filter(daycare_df, idsch          == clicked_id)
     
     name <- NULL
     if (nrow(school_match) > 0) {
       name <- school_match$school_name[1]  
-      selected_school_id(school_match$mde_school_id[1])
+      selected_school_id(school_match$school_id[1])
     } else if (nrow(daycare_match) > 0) {
       name <- as.character(daycare_match$idsch[1]) 
       selected_school_id(daycare_match$idsch[1])
@@ -124,7 +124,7 @@ subMapServer <- function(input, output, session,
         dplyr::slice(1)
       
       if (nrow(selected_row) > 0) {
-        selected_school_id(selected_row$mde_school_id)
+        selected_school_id(selected_row$school_id)
         leafletProxy("sub_map") %>%
           clearGroup("highlight") %>%
           addCircleMarkers(
@@ -170,7 +170,7 @@ subMapServer <- function(input, output, session,
         dplyr::slice(1)
       
       if (nrow(school_row) > 0) {
-        selected_school_id(school_row$mde_school_id)
+        selected_school_id(school_row$school_id)
         leafletProxy("sub_map") %>%
           clearGroup("highlight") %>%
           addCircleMarkers(
@@ -242,7 +242,7 @@ subMapServer <- function(input, output, session,
           color = "black",
           fillColor = ~get_fill_color(full_vax_pct),
           fillOpacity = 0.9,
-          layerId = ~mde_school_id,
+          layerId = ~school_id,
           popup = ~paste0(
             "<b>", school_name, "</b><br>", COUNTYNAME, " County<br>",  
             "Grades: ", GRADERANGE, "<br>",
@@ -284,7 +284,7 @@ subMapServer <- function(input, output, session,
           color = "black",
           fillColor = ~get_fill_color(full_vax_pct),
           fillOpacity = 0.9,
-          layerId = ~mde_school_id,
+          layerId = ~school_id,
           group = "Schools",
           popup = ~paste0("<b>", school_name, "</b><br>", COUNTYNAME, " County<br>",
                           "Type: School<br>Grades: ", GRADERANGE, "<br>",

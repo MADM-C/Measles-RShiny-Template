@@ -43,7 +43,7 @@ server <- function(input, output, session) {
   # Initialize dropdowns when the app loads
   observe({
     # Populate county dropdown with sorted list of unique county names
-    updateSelectInput(session, "selected_county", choices = sort(unique(mn_counties$county_name)))
+    updateSelectInput(session, "selected_county", choices = sort(unique(counties$county_name)))
     
     # Populate measles case age group selector
     updateSelectInput(
@@ -79,7 +79,7 @@ server <- function(input, output, session) {
     session = session,
     county_map_data = county_map_data,
     measles_cases = measles_cases,
-    mn_counties = mn_counties,
+    counties = counties,
     pal_county = pal_county
   )
   
@@ -207,7 +207,7 @@ server <- function(input, output, session) {
         .groups = "drop"
       ) %>%
       dplyr::left_join(
-        mn_counties,
+        counties,
         by = c("county" = "county_lower")
       ) %>%
       sf::st_as_sf() %>%
@@ -218,7 +218,7 @@ server <- function(input, output, session) {
     
     # ---- build map ----
     map <- leaflet(
-      mn_counties,
+      counties,
       options = leafletOptions(minZoom = 5, maxZoom = 9)
     ) |>
       setView(lng = -94.5, lat = 46.5, zoom = 6) |>
